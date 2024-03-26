@@ -2,14 +2,13 @@
     --proposed-cell-size: 32px;
     --cell-size: 32px;
 
-    --unmarked-light: #4C5B5C;
-    --unmarked-dark: #414E4F;
-    --marked-light: #F6BD60;
-    --marked-dark: #E8B25C;
+    --unmarked: #4C5B5C;
+    --marked: #F6BD60;
 }
 
 body {
     margin: 0;
+    user-select: none;
 }
 
 #content {
@@ -33,36 +32,21 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    background-color: var(--unmarked);
+}
+
+.cell.marked {
+    background-color: var(--marked);
 }
 
 .row:nth-child(even) {
     .cell:nth-child(even) {
-        background-color: var(--unmarked-light);
-    }
-    .cell:nth-child(even).marked {
-        background-color: var(--marked-light);
-    }
-
-    .cell:nth-child(odd) {
-        background-color: var(--unmarked-dark);
-    }
-    .cell:nth-child(odd).marked {
-        background-color: var(--marked-dark);
+        filter: brightness(0.9);
     }
 }
 
 .row:nth-child(odd) {
-    .cell:nth-child(even) {
-        background-color: var(--unmarked-dark);
-    }
-    .cell:nth-child(even).marked {
-        background-color: var(--marked-dark);
-    }
-
     .cell:nth-child(odd) {
-        background-color: var(--unmarked-light);
-    }
-    .cell:nth-child(odd).marked {
-        background-color: var(--marked-light);
+        filter: brightness(0.9);
     }
 }

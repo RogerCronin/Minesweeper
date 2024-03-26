@@ -1,6 +1,7 @@
 const content = document.getElementById("content");
 const cellSize = parseInt(getComputedStyle(content).getPropertyValue("--cell-size"));
 const bombDensity = 0.1;
+const numberToEmoji = ["", "1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣"];
 
 const rows = Math.floor(window.innerHeight / cellSize);
 const columns = Math.floor(window.innerWidth / cellSize);
@@ -67,7 +68,6 @@ function clickCell(row, column) {
     const cell = cells[row][column];
     if(!cell.isBomb) {
         cell.isMarked = true;
-        cell.innerHTML = cell.neighboringBombs;
 
         cell.classList.add("marked");
 
@@ -75,9 +75,11 @@ function clickCell(row, column) {
             forAllNeighbors(row, column, (neighborCell, neighborRow, neighborColumn) => {
                 if(!neighborCell.isMarked) clickCell(neighborRow, neighborColumn);
             });
+        } else {
+            cell.innerHTML = numberToEmoji[cell.neighboringBombs];
         }
     } else {
-        cell.innerHTML = "X";
+        cell.innerHTML = "💣";
     }
 }
 
@@ -87,7 +89,7 @@ function toggleFlagForCell(row, column) {
 
     cell.isFlagged = !cell.isFlagged;
     if(cell.isFlagged) {
-        cell.innerHTML = "F";
+        cell.innerHTML = "🚩";
     } else {
         cell.innerHTML = "";
     }
