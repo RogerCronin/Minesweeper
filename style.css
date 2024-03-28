@@ -25,6 +25,30 @@ body {
     color: white;
     overflow: hidden;
 
+    /* kindly taken from https://css-tricks.com/background-patterns-simplified-by-conic-gradients/ */
+    background-color: color-mix(in srgb, var(--unmarked) 90%, black);
+    background-image:
+        linear-gradient(
+            45deg,
+            var(--unmarked) 25%,
+            transparent 25%, 
+            transparent 75%,
+            var(--unmarked) 75%,
+            var(--unmarked)
+        ),
+        linear-gradient(
+            45deg,
+            var(--unmarked) 25%,
+            transparent 25%, 
+            transparent 75%,
+            var(--unmarked) 75%,
+            var(--unmarked)
+        );
+    background-size: calc(2 * var(--cell-size)) calc(2 * var(--cell-size));
+    background-position: 0 0, var(--cell-size) var(--cell-size);
+}
+
+.reddit-mono-font {
     font-family: "Reddit Mono", monospace;
     font-optical-sizing: auto;
     font-weight: 900;
@@ -44,16 +68,52 @@ body {
     position: absolute;
     height: 100%;
     width: 100%;
+    backdrop-filter: blur(calc(0.1 * var(--cell-size)));
+    z-index: 3;
+    transition: backdrop-filter 0.5s linear;
+}
+
+#title-content.unblur {
+    backdrop-filter: none;
+}
+
+#title-content-wrapper {
+    position: absolute;
+    height: 100%;
+    width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    backdrop-filter: blur(calc(0.1 * var(--cell-size)));
-    z-index: -2;
+
+    top: 0;
+    transition: top 0.5s ease-in-out;
+}
+
+#title-content-wrapper.up {
+    top: -100vh;
 }
 
 #title-content h1 {
     font-size: 4rem;
+}
+
+#title-content input {
+    font-size: 2rem;
+    color: white;
+    background-color: var(--green);
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 1rem;
+    transition: background-color 0.05s linear;
+}
+
+#title-content input:hover {
+    background-color: var(--blue);
+}
+
+#title-content input:active {
+    transform: scale(0.95);
 }
 
 .row {

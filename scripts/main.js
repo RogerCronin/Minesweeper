@@ -1,7 +1,18 @@
 const content = document.getElementById("content");
 const root = document.querySelector(":root");
+const titleContent = document.getElementById("title-content");
+const titleContentWrapper = document.getElementById("title-content-wrapper");
+
 const cellSize = parseInt(getComputedStyle(root).getPropertyValue("--cell-size"));
 const bombDensity = 0.05;
+
+let gameState = 0;
+// 0 - title screen
+// 1 - ingame
+// 2 - paused
+// 3 - win / lose animation
+
+let numberOfFlags = 0;
 
 const rows = Math.round(window.innerHeight / cellSize);
 root.style.setProperty("--cell-height", `${window.innerHeight / rows}px`);
@@ -11,45 +22,60 @@ const numberOfBombs = Math.floor(rows * columns * bombDensity);
 
 const cells = [];
 
-for(let row = 0; row < rows; row++) {
-    const rowDiv = document.createElement("div");
-
-    rowDiv.classList.add("row");
-
-    cells.push([]);
-    for(let column = 0; column < columns; column++) {
-        const cell = document.createElement("div");
-        cell.classList.add("cell");
-        cell.classList.add("unmarked");
-
-        cell.isBomb = Math.random() < bombDensity;
-        cell.isMarked = false;
-        cell.isFlagged = false;
-        cell.neighboringBombs = 0;
-
-        const cellLabel = document.createElement("span");
-        cell.label = cellLabel;
-        cell.appendChild(cellLabel);
-
-        cell.addEventListener("click", () => clickCell(row, column));
-        cell.addEventListener("contextmenu", (e) => {
-            e.preventDefault();
-            toggleFlagForCell(row, column);
-        });
-
-        rowDiv.appendChild(cell);
-        cells[cells.length - 1].push(cell);
+function createBoard() {
+    for(let row = 0; row < rows; row++) {
+        const rowDiv = document.createElement("div");
+    
+        rowDiv.classList.add("row");
+    
+        cells.push([]);
+        for(let column = 0; column < columns; column++) {
+            const cell = document.createElement("div");
+            cell.classList.add("cell");
+            cell.classList.add("unmarked");
+    
+            cell.isBomb = false;
+            cell.isMarked = false;
+            cell.isFlagged = false;
+            cell.neighboringBombs = 0;
+    
+            const cellLabel = document.createElement("span");
+            cell.label = cellLabel;
+            cell.appendChild(cellLabel);
+    
+            cell.addEventListener("click", () => clickCell(row, column));
+            cell.addEventListener("contextmenu", (e) => {
+                e.preventDefault();
+                toggleFlagForCell(row, column);
+            });
+    
+            rowDiv.appendChild(cell);
+            cells[cells.length - 1].push(cell);
+        }
+    
+        content.appendChild(rowDiv);
     }
 
-    content.appendChild(rowDiv);
+    seedBombs();
 }
 
-for(let row = 0; row < rows; row++) {
-    for(let column = 0; column < columns; column++) {
-        const cell = cells[row][column];
-        forAllNeighbors(row, column, (neighborCell) => {
-            if(neighborCell.isBomb) cell.neighboringBombs++;
-        });
+function seedBombs() {
+    for(let i = 0; i < numberOfBombs; i++) {
+        let row, column;
+        do {
+            row = Math.floor(Math.random() * rows);
+            column = Math.floor(Math.random() * columns);
+        } while(cells[row][column].isBomb);
+        cells[row][column].isBomb = true;
+    }
+
+    for(let row = 0; row < rows; row++) {
+        for(let column = 0; column < columns; column++) {
+            const cell = cells[row][column];
+            forAllNeighbors(row, column, (neighborCell) => {
+                if(neighborCell.isBomb) cell.neighboringBombs++;
+            });
+        }
     }
 }
 
@@ -103,6 +129,8 @@ function clickCell(row, column) {
             animationState.playExplosion(cell);
         }
     }
+
+    checkForWin();
 }
 
 function toggleFlagForCell(row, column) {
@@ -110,6 +138,44 @@ function toggleFlagForCell(row, column) {
     if(cell.isMarked) return;
 
     cell.isFlagged = !cell.isFlagged;
+    numberOfFlags += cell.isFlagged ? 1 : -1;
     if(cell.isFlagged) animationState.playLabelChange(cell, "🚩")
     else cell.label.innerHTML = "";
+
+    checkForWin();
+}
+
+function startGame() {
+    createBoard();
+    titleContentWrapper.classList.add("up");
+    titleContent.classList.add("unblur");
+    
+    const transitionEndHandler = e => {
+        if(e.propertyName !== "backdrop-filter") return;
+        titleContent.style.zIndex = -1;
+        gameState = 1;
+        titleContent.removeEventListener("transitionend", transitionEndHandler)
+    }
+    titleContent.addEventListener("transitionend", transitionEndHandler);
+}
+
+function checkForWin() {
+    if(numberOfBombs !== numberOfFlags || gameState !== 1) return;
+    for(let row = 0; row < rows; row++) {
+        for(let column = 0; column < columns; column++) {
+            if(cells[row][column].isBomb) continue;
+            if(!cells[row][column].isMarked) return;
+        }
+    }
+    endGame();
+}
+
+function endGame() {
+    gameState = 3;
+    titleContent.style.zIndex = 3;
+    setTimeout(() => {
+        titleContentWrapper.classList.remove("up");
+        titleContent.classList.remove("unblur");
+        gameState = 0;
+    }, 3000);
 }

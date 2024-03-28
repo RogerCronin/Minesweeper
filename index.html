@@ -9,11 +9,12 @@
     <script src="./scripts/main.js" defer></script>
     <script src="./scripts/animations.js"></script>
 </head>
-<body>
+<body class="reddit-mono-font">
     <div id="title-content">
-        <h1>Minesweeper</h1>
-        <input type="button" value="New Game"/>
-        <input type="range" min="0" max="0.8"/>
+        <div id="title-content-wrapper">
+            <h1>Minesweeper</h1>
+            <input type="button" value="New Game" class="reddit-mono-font" onclick="startGame()"/>
+        </div>
     </div>
     <div id="content"></div>
 </body>
