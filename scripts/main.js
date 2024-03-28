@@ -3,6 +3,9 @@ const root = document.querySelector(":root");
 const cellSize = parseInt(getComputedStyle(root).getPropertyValue("--cell-size"));
 const bombDensity = 0.1;
 
+const playClickAnimation = playNoAnimation;
+const playLabelChangeAnimation = playNoAnimationLabelChangeAnimation;
+
 const rows = Math.round(window.innerHeight / cellSize);
 root.style.setProperty("--cell-height", `${window.innerHeight / rows}px`);
 const columns = Math.round(window.innerWidth / cellSize);
@@ -70,54 +73,6 @@ function forAllNeighbors(row, column, logic) {
     }
 }
 
-function playFormingAnimation(cell) {
-    const formingPiece = document.createElement("div");
-    formingPiece.classList.add("cell", "forming-cell", `bombs${cell.neighboringBombs}`);
-    formingPiece.innerHTML = cell.neighboringBombs;
-    cell.appendChild(formingPiece);
-    cell.addEventListener("animationend", () => {
-        formingPiece.remove();
-        cell.classList.replace("unmarked", `bombs${cell.neighboringBombs}`);
-    });
-}
-
-function playBreakingAnimation(cell) {
-    const bounds = cell.getBoundingClientRect();
-
-    const pieceContainer = document.createElement("div");
-    pieceContainer.classList.add("broken-piece-container");
-    pieceContainer.style.top = `${bounds.top}px`;
-    pieceContainer.style.left = `${bounds.left}px`;
-
-    const pieces = [];
-    for(let i = 0; i < 4; i++) {
-        const piece = document.createElement("div");
-        piece.classList.add("broken-piece");
-        pieces.push(piece);
-        pieceContainer.appendChild(piece);
-    }
-
-    pieces[0].classList.add("left");
-    pieces[1].classList.add("top");
-    pieces[2].classList.add("right");
-    pieces[3].classList.add("bottom");
-
-    setTimeout(() => {
-        pieces.forEach(p => p.style.opacity = 0);
-
-        pieces[0].style.transform = `translate(-${Math.random() * (cellSize / 2) + (cellSize / 2)}px, ${Math.random() * cellSize - (cellSize / 2)}px) rotate(${Math.random() * 45 * (Math.random() < 0.5 ? 1 : 1)}deg)`;
-        pieces[1].style.transform = `translate(${Math.random() * cellSize - (cellSize / 2)}px, -${Math.random() * (cellSize / 2) + (cellSize / 2)}px) rotate(${Math.random() * 45 * (Math.random() < 0.5 ? 1 : 1)}deg)`;
-        pieces[2].style.transform = `translate(${Math.random() * (cellSize / 2) + (cellSize / 2)}px, ${Math.random() * cellSize - (cellSize / 2)}px) rotate(${Math.random() * 45 * (Math.random() < 0.5 ? 1 : 1)}deg)`;
-        pieces[3].style.transform = `translate(${Math.random() * cellSize - (cellSize / 2)}px, ${Math.random() * (cellSize / 2) + (cellSize / 2)}px) rotate(${Math.random() * 45 * (Math.random() < 0.5 ? 1 : 1)}deg)`;
-
-        pieces[0].addEventListener("transitionend", () => {
-            pieces.forEach(p => p.remove());
-        });
-    }, 1);
-
-    content.appendChild(pieceContainer);
-}
-
 function clickCell(row, column) {
     const cell = cells[row][column];
 
@@ -133,9 +88,8 @@ function clickCell(row, column) {
             });
         }
     } else {
+        cell.isMarked = true;
         if(!cell.isBomb) {
-            cell.isMarked = true;
-
             if(cell.neighboringBombs === 0) {
                 cell.classList.replace("unmarked", "bombs0");
                 forAllNeighbors(row, column, (neighborCell, neighborRow, neighborColumn) => {
@@ -143,10 +97,12 @@ function clickCell(row, column) {
                 });
             } else {
                 cell.label.innerHTML = cell.neighboringBombs;
-                playFormingAnimation(cell);
+                playClickAnimation(cell);
             }
         } else {
-            cell.label.innerHTML = "💣";
+
+            playLabelChangeAnimation(cell, "💣");
+            playExplosionAnimation(cell);
         }
     }
 }
@@ -156,9 +112,6 @@ function toggleFlagForCell(row, column) {
     if(cell.isMarked) return;
 
     cell.isFlagged = !cell.isFlagged;
-    if(cell.isFlagged) {
-        cell.label.innerHTML = "🚩";
-    } else {
-        cell.label.innerHTML = "";
-    }
+    if(cell.isFlagged) playLabelChangeAnimation(cell, "🚩")
+    else cell.label.innerHTML = "";
 }

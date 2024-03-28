@@ -57,23 +57,6 @@ body {
     font-size: calc(var(--cell-smallest) - (var(--cell-smallest)) * 0.3);
 }
 
-.cell.forming-cell {
-    position: absolute;
-    animation: forming-cell 0.05s linear;
-}
-
-@keyframes forming-cell {
-    0% {
-        transform: scale(0.9);
-        border-radius: 10%;
-    }
-
-    100% {
-        transform: scale(1);
-        border-radius: 0%;
-    }
-}
-
 .cell.bombs0 {
     background-color: var(--blank);
 }
@@ -126,4 +109,62 @@ body {
     .cell:nth-child(odd).bombs0 {
         filter: brightness(0.9);
     }
+}
+
+.cell.forming-cell {
+    position: absolute;
+    animation: forming-cell 0.05s linear;
+}
+
+@keyframes forming-cell {
+    0% {
+        transform: scale(0.9);
+        border-radius: 10%;
+    }
+
+    100% {
+        transform: scale(1);
+        border-radius: 0%;
+    }
+}
+
+@keyframes pop-spawn {
+    0% {
+        transform: scale(0.9);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+.broken-piece-container {
+    position: absolute;
+}
+
+.broken-piece {
+    position: absolute;
+    height: var(--cell-height);
+    width: var(--cell-width);
+    top: 0;
+    left: 0;
+    background-color: white;
+    opacity: 1;
+    transition: transform 0.5s linear, opacity 0.25s linear;
+}
+
+.broken-piece.left {
+    clip-path: polygon(0 0, 0% 100%, 50% 50%);
+}
+
+.broken-piece.top {
+    clip-path: polygon(0 0, 100% 0, 50% 50%);
+}
+
+.broken-piece.right {
+    clip-path: polygon(100% 100%, 100% 0, 50% 50%);
+}
+
+.broken-piece.bottom {
+    clip-path: polygon(100% 100%, 0 100%, 50% 50%);
 }
