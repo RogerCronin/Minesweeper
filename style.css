@@ -24,6 +24,7 @@ body {
     user-select: none;
     color: white;
     overflow: hidden;
+    white-space: nowrap;
 
     /* kindly taken from https://css-tricks.com/background-patterns-simplified-by-conic-gradients/ */
     background-color: color-mix(in srgb, var(--unmarked) 90%, black);
@@ -71,6 +72,7 @@ body {
     backdrop-filter: blur(calc(0.1 * var(--cell-size)));
     z-index: 3;
     transition: backdrop-filter 0.5s linear;
+    text-align: center;
 }
 
 #title-content.unblur {
@@ -85,7 +87,6 @@ body {
     justify-content: center;
     align-items: center;
     flex-direction: column;
-
     top: 0;
     transition: top 0.5s ease-in-out;
 }
@@ -99,21 +100,51 @@ body {
 }
 
 #title-content input {
-    font-size: 2rem;
     color: white;
-    background-color: var(--green);
-    border: none;
-    padding: 1rem 2rem;
     border-radius: 1rem;
+    border: none;
     transition: background-color 0.05s linear;
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+    font-family: "Reddit Mono", monospace;
+    font-optical-sizing: auto;
+    font-weight: 900;
+    font-style: normal;
+    margin: 0.5rem;
+    width: 400px;
+}
+
+#title-content-wrapper input:nth-child(2) {
+    background-color: var(--blue);
+}
+
+#title-content-wrapper input:nth-child(3) {
+    background-color: var(--green);
+}
+
+#title-content-wrapper input:nth-child(4) {
+    background-color: var(--red);
+}
+
+#title-content-wrapper input:nth-child(5) {
+    background-color: var(--purple);
+}
+
+#title-content-wrapper input:nth-child(6) {
+    background-color: var(--maroon);
 }
 
 #title-content input:hover {
-    background-color: var(--blue);
+    background-color: var(--blank);
 }
 
 #title-content input:active {
     transform: scale(0.95);
+}
+
+#title-content input.large-button {
+    font-size: 2rem;
+    padding: 1rem 2rem;
 }
 
 .row {
@@ -258,4 +289,12 @@ div.firework {
     height: 35px;
     background-image: url("./assets/fireworks.png");
     background-repeat: no-repeat;
+}
+
+#cursor-info {
+    position: absolute;
+    top: 0;
+    left: 0;
+    font-size: 2rem;
+    text-overflow: clip;
 }

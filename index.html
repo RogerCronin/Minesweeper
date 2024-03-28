@@ -6,16 +6,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=0"/>
     <link rel="shortcut icon" type="image/png" href="./assets/favicon.png"/>
     <link rel="stylesheet" href="style.css"/>
-    <script src="./scripts/main.js" defer></script>
     <script src="./scripts/animations.js"></script>
+    <script src="./scripts/menu.js"></script>
+    <script src="./scripts/main.js" defer></script>
 </head>
 <body class="reddit-mono-font">
     <div id="title-content">
         <div id="title-content-wrapper">
             <h1>Minesweeper</h1>
-            <input type="button" value="New Game" class="reddit-mono-font" onclick="startGame()"/>
+            <input type="button" value="New Game" class="large-button" onclick="startGame()"/>
+            <input type="button" value="Some bombs" id="bomb-count-button" onclick="scrollBombCount()"/>
+            <input type="button" value="Normal squares" id="cell-size-button" onclick="scrollCellSize()"/>
+            <input type="button" value="Normal animations" id="animations-button" onclick="scrollAnimations()"/>
+            <input type="button" value="Show info by cursor" id="show-info-button" onclick="scrollShowInfo()"/>
         </div>
     </div>
     <div id="content"></div>
+    <span id="cursor-info"></span>
 </body>
 </html>
