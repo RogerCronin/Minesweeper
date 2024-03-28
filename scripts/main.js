@@ -14,13 +14,28 @@ let gameState = 0;
 
 let numberOfFlags = 0;
 
-const rows = Math.round(window.innerHeight / cellSize);
-root.style.setProperty("--cell-height", `${window.innerHeight / rows}px`);
-const columns = Math.round(window.innerWidth / cellSize);
-root.style.setProperty("--cell-width", `${window.innerWidth / columns}px`);
-const numberOfBombs = Math.floor(rows * columns * bombDensity);
+let rows, columns, numberOfBombs;
+function calculateRowsColumnsAndBombs() {
+    rows = Math.round(window.innerHeight / cellSize);
+    root.style.setProperty("--cell-height", `${window.innerHeight / rows}px`);
+    columns = Math.round(window.innerWidth / cellSize);
+    root.style.setProperty("--cell-width", `${window.innerWidth / columns}px`);
+    numberOfBombs = Math.floor(rows * columns * bombDensity);
+}
+calculateRowsColumnsAndBombs();
 
-const cells = [];
+// preload assets
+const explosionAudio = new Audio("./assets/explosion.wav");
+new Audio("./assets/fireworks.wav");
+new Image().src = "./assets/explosion.png";
+new Image().src = "./assets/fireworks.png";
+
+let cells = [];
+
+function destroyBoard() {
+    content.innerHTML = "";
+    cells = [];
+}
 
 function createBoard() {
     for(let row = 0; row < rows; row++) {
@@ -127,6 +142,7 @@ function clickCell(row, column) {
         } else {
             animationState.playLabelChange(cell, "💣");
             animationState.playExplosion(cell);
+            endGame();
         }
     }
 
@@ -146,10 +162,11 @@ function toggleFlagForCell(row, column) {
 }
 
 function startGame() {
+    destroyBoard();
     createBoard();
     titleContentWrapper.classList.add("up");
     titleContent.classList.add("unblur");
-    
+
     const transitionEndHandler = e => {
         if(e.propertyName !== "backdrop-filter") return;
         titleContent.style.zIndex = -1;
@@ -179,3 +196,17 @@ function endGame() {
         gameState = 0;
     }, 3000);
 }
+
+function panicEndGame() {
+    titleContent.style.zIndex = 3;
+    titleContentWrapper.classList.remove("up");
+    titleContent.classList.remove("unblur");
+    gameState = 0;
+    destroyBoard();
+}
+
+window.addEventListener("resize", () => {
+    calculateRowsColumnsAndBombs();
+    if(gameState !== 0) panicEndGame();
+    else destroyBoard();
+});

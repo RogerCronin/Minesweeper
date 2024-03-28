@@ -1,3 +1,5 @@
+const sleep = ms => new Promise(a => setTimeout(a, ms));
+
 function playLabelChangePopSpawnAnimation(cell, newText) {
     cell.label.innerHTML = newText;
     cell.label.style.animation = "pop-spawn 0.05s linear";
@@ -65,11 +67,38 @@ function playClickBreakingAnimation(cell) {
 }
 
 function playExplosionStandardAnimation(cell) {
-    
+    const bounds = cell.getBoundingClientRect();
+
+    for(let i = 0; i < 16; i++) {
+        const r = cellSize * 3 * Math.sqrt(Math.random());
+        const theta = 2 * Math.PI * Math.random();
+        spawnExplosionImage(bounds.left + r * Math.cos(theta) - 160 / 2, bounds.top + r * Math.sin(theta) - 160 / 2);
+    }
 }
 
 function playExplosionNoAnimation(cell) {
+    playExplosionSound();
+}
 
+async function spawnExplosionImage(left, top) {
+    playExplosionSound();
+
+    const imageElement = document.createElement("div");
+    imageElement.classList.add("explosion");
+    imageElement.style.left = `${left}px`;
+    imageElement.style.top = `${top}px`;
+    imageElement.style.transform = `scale(${2 * cellSize / 160 * 1.5})`;
+    content.appendChild(imageElement);
+
+    for(let i = 0; i < 16; i++) {
+        imageElement.style.backgroundPosition = `0px -${i * 160}px`;
+        await sleep(25);
+    }
+    imageElement.remove();
+}
+
+function playExplosionSound() {
+    explosionAudio.play();
 }
 
 const formingAnimationState = {

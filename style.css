@@ -243,3 +243,11 @@ body {
 .broken-piece.bottom {
     clip-path: polygon(100% 100%, 0 100%, 50% 50%);
 }
+
+div.explosion {
+    position: absolute;
+    width: 160px;
+    height: 160px;
+    background-image: url("./assets/explosion.png");
+    background-repeat: no-repeat;
+}
