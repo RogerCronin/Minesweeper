@@ -251,3 +251,11 @@ div.explosion {
     background-image: url("./assets/explosion.png");
     background-repeat: no-repeat;
 }
+
+div.firework {
+    position: absolute;
+    width: 35px;
+    height: 35px;
+    background-image: url("./assets/fireworks.png");
+    background-repeat: no-repeat;
+}

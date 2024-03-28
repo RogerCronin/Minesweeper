@@ -26,7 +26,7 @@ calculateRowsColumnsAndBombs();
 
 // preload assets
 const explosionAudio = new Audio("./assets/explosion.wav");
-new Audio("./assets/fireworks.wav");
+const fireworkAudio = new Audio("./assets/fireworks.wav");
 new Image().src = "./assets/explosion.png";
 new Image().src = "./assets/fireworks.png";
 
@@ -184,6 +184,7 @@ function checkForWin() {
             if(!cells[row][column].isMarked) return;
         }
     }
+    animationState.playFireworks();
     endGame();
 }
 

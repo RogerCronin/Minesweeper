@@ -69,6 +69,7 @@ function playClickBreakingAnimation(cell) {
 function playExplosionStandardAnimation(cell) {
     const bounds = cell.getBoundingClientRect();
 
+    playExplosionSound();
     for(let i = 0; i < 16; i++) {
         const r = cellSize * 3 * Math.sqrt(Math.random());
         const theta = 2 * Math.PI * Math.random();
@@ -76,47 +77,81 @@ function playExplosionStandardAnimation(cell) {
     }
 }
 
-function playExplosionNoAnimation(cell) {
+async function playFireworksStandardAnimation(_) {
+    playFireworksSound();
+    for(let i = 0; i < rows * columns; i++) {
+        spawnFireworkImage(Math.random() * window.innerWidth, Math.random() * window.innerHeight);
+        await sleep(10);
+    }
+}
+
+function playExplosionNoAnimation(_) {
     playExplosionSound();
 }
 
-async function spawnExplosionImage(left, top) {
-    playExplosionSound();
+function playFireworksNoAnimation(_) {
+    playFireworksSound();
+}
 
-    const imageElement = document.createElement("div");
-    imageElement.classList.add("explosion");
-    imageElement.style.left = `${left}px`;
-    imageElement.style.top = `${top}px`;
-    imageElement.style.transform = `scale(${2 * cellSize / 160 * 1.5})`;
-    content.appendChild(imageElement);
+async function spawnExplosionImage(left, top) {
+    const explosion = document.createElement("div");
+    explosion.classList.add("explosion");
+    explosion.style.left = `${left}px`;
+    explosion.style.top = `${top}px`;
+    explosion.style.transform = `scale(${2 * cellSize / 160 * 1.5})`;
+    content.appendChild(explosion);
 
     for(let i = 0; i < 16; i++) {
-        imageElement.style.backgroundPosition = `0px -${i * 160}px`;
+        explosion.style.backgroundPosition = `0px -${i * 160}px`;
         await sleep(25);
     }
-    imageElement.remove();
+    explosion.remove();
+}
+
+async function spawnFireworkImage(left, top) {
+    const firework = document.createElement("div");
+    firework.classList.add("firework");
+    firework.style.left = `${left}px`;
+    firework.style.top = `${top}px`;
+    firework.style.transform = `scale(${cellSize / 35 * 0.75})`;
+    firework.style.filter = `hue-rotate(${Math.floor(Math.random() * 360)}deg)`
+    content.appendChild(firework);
+
+    for(let i = 0; i < 16; i++) {
+        firework.style.backgroundPosition = `0px -${i * 40}px`;
+        await sleep(75);
+    }
+    await sleep(Math.random() * 800);
+    firework.remove();
 }
 
 function playExplosionSound() {
     explosionAudio.play();
 }
 
+function playFireworksSound() {
+    fireworkAudio.play();
+}
+
 const formingAnimationState = {
     playClick: playClickFormingAnimation,
     playLabelChange: playLabelChangePopSpawnAnimation,
-    playExplosion: playExplosionStandardAnimation
+    playExplosion: playExplosionStandardAnimation,
+    playFireworks: playFireworksStandardAnimation
 };
 
 const breakingAnimationState = {
     playClick: playClickBreakingAnimation,
     playLabelChange: playLabelChangePopSpawnAnimation,
-    playExplosion: playExplosionStandardAnimation
+    playExplosion: playExplosionStandardAnimation,
+    playFireworks: playFireworksStandardAnimation
 };
 
 const noAnimationState = {
     playClick: playClickNoAnimation,
     playLabelChange: playLabelChangeNoAnimation,
-    playExplosion: playExplosionNoAnimation
+    playExplosion: playExplosionNoAnimation,
+    playFireworks: playFireworksNoAnimation
 };
 
 let animationState = formingAnimationState;
