@@ -1,10 +1,7 @@
 const content = document.getElementById("content");
 const root = document.querySelector(":root");
 const cellSize = parseInt(getComputedStyle(root).getPropertyValue("--cell-size"));
-const bombDensity = 0.1;
-
-const playClickAnimation = playNoAnimation;
-const playLabelChangeAnimation = playNoAnimationLabelChangeAnimation;
+const bombDensity = 0.05;
 
 const rows = Math.round(window.innerHeight / cellSize);
 root.style.setProperty("--cell-height", `${window.innerHeight / rows}px`);
@@ -76,6 +73,8 @@ function forAllNeighbors(row, column, logic) {
 function clickCell(row, column) {
     const cell = cells[row][column];
 
+    if(cell.isFlagged) return;
+
     if(cell.isMarked) {
         let neighborFlagCount = 0;
         forAllNeighbors(row, column, neighbor => {
@@ -97,12 +96,11 @@ function clickCell(row, column) {
                 });
             } else {
                 cell.label.innerHTML = cell.neighboringBombs;
-                playClickAnimation(cell);
+                animationState.playClick(cell);
             }
         } else {
-
-            playLabelChangeAnimation(cell, "💣");
-            playExplosionAnimation(cell);
+            animationState.playLabelChange(cell, "💣");
+            animationState.playExplosion(cell);
         }
     }
 }
@@ -112,6 +110,6 @@ function toggleFlagForCell(row, column) {
     if(cell.isMarked) return;
 
     cell.isFlagged = !cell.isFlagged;
-    if(cell.isFlagged) playLabelChangeAnimation(cell, "🚩")
+    if(cell.isFlagged) animationState.playLabelChange(cell, "🚩")
     else cell.label.innerHTML = "";
 }

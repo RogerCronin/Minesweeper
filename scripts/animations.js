@@ -1,4 +1,4 @@
-function playPopSpawnLabelChangeAnimation(cell, newText) {
+function playLabelChangePopSpawnAnimation(cell, newText) {
     cell.label.innerHTML = newText;
     cell.label.style.animation = "pop-spawn 0.05s linear";
     cell.label.addEventListener("animationend", () => {
@@ -6,15 +6,15 @@ function playPopSpawnLabelChangeAnimation(cell, newText) {
     }, { once: true });
 }
 
-function playNoAnimationLabelChangeAnimation(cell, newText) {
+function playLabelChangeNoAnimation(cell, newText) {
     cell.label.innerHTML = newText;
 }
 
-function playNoAnimation(cell) {
+function playClickNoAnimation(cell) {
     cell.classList.replace("unmarked", `bombs${cell.neighboringBombs}`);
 }
 
-function playFormingAnimation(cell) {
+function playClickFormingAnimation(cell) {
     const formingPiece = document.createElement("div");
     formingPiece.classList.add("cell", "forming-cell", `bombs${cell.neighboringBombs}`);
     formingPiece.innerHTML = cell.neighboringBombs;
@@ -25,7 +25,7 @@ function playFormingAnimation(cell) {
     }, { once: true });
 }
 
-function playBreakingAnimation(cell) {
+function playClickBreakingAnimation(cell) {
     cell.classList.replace("unmarked", `bombs${cell.neighboringBombs}`);
 
     const bounds = cell.getBoundingClientRect();
@@ -64,6 +64,30 @@ function playBreakingAnimation(cell) {
     content.appendChild(pieceContainer);
 }
 
-function playExplosionAnimation(cell) {
+function playExplosionStandardAnimation(cell) {
     
 }
+
+function playExplosionNoAnimation(cell) {
+
+}
+
+const formingAnimationState = {
+    playClick: playClickFormingAnimation,
+    playLabelChange: playLabelChangePopSpawnAnimation,
+    playExplosion: playExplosionStandardAnimation
+};
+
+const breakingAnimationState = {
+    playClick: playClickBreakingAnimation,
+    playLabelChange: playLabelChangePopSpawnAnimation,
+    playExplosion: playExplosionStandardAnimation
+};
+
+const noAnimationState = {
+    playClick: playClickNoAnimation,
+    playLabelChange: playLabelChangeNoAnimation,
+    playExplosion: playExplosionNoAnimation
+};
+
+let animationState = formingAnimationState;

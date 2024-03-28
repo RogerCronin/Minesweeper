@@ -24,6 +24,11 @@ body {
     user-select: none;
     color: white;
     overflow: hidden;
+
+    font-family: "Reddit Mono", monospace;
+    font-optical-sizing: auto;
+    font-weight: 900;
+    font-style: normal;
 }
 
 #content {
@@ -33,6 +38,22 @@ body {
     justify-content: center;
     align-items: center;
     flex-direction: column;
+}
+
+#title-content {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    backdrop-filter: blur(calc(0.1 * var(--cell-size)));
+    z-index: -2;
+}
+
+#title-content h1 {
+    font-size: 4rem;
 }
 
 .row {
@@ -48,12 +69,6 @@ body {
     justify-content: center;
     align-items: center;
     background-color: var(--unmarked);
-
-    font-family: "Reddit Mono", monospace;
-    font-optical-sizing: auto;
-    font-weight: 900;
-    font-style: normal;
-
     font-size: calc(var(--cell-smallest) - (var(--cell-smallest)) * 0.3);
 }
 
