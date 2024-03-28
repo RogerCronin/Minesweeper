@@ -1,14 +1,29 @@
+@import url("https://fonts.googleapis.com/css2?family=Reddit+Mono:wght@900&display=swap");
+
 :root {
-    --proposed-cell-size: 32px;
-    --cell-size: 32px;
+    --cell-size: 64px;
+    --cell-width: var(--cell-size);
+    --cell-height: var(--cell-size);
+    --cell-smallest: min(var(--cell-width), var(--cell-height));
 
     --unmarked: #4C5B5C;
-    --marked: #F6BD60;
+    --blank: #F6BD60;
+
+    --blue: #3A86FF;
+    --green: #0CCE6B;
+    --red: #ED474A;
+    --purple: #957FEF;
+    --maroon: #A26769; /* I know it's not maroon */
+    --turquoise: #1EA896; /* is that how you spell it? */
+    --light-purple: #451F55;
+    --lighter-purple: #040926;
 }
 
 body {
     margin: 0;
     user-select: none;
+    color: white;
+    overflow: hidden;
 }
 
 #content {
@@ -27,26 +42,98 @@ body {
 }
 
 .cell {
-    height: var(--cell-size);
-    width: var(--cell-size);
+    height: var(--cell-height);
+    width: var(--cell-width);
     display: flex;
     justify-content: center;
     align-items: center;
     background-color: var(--unmarked);
+
+    font-family: "Reddit Mono", monospace;
+    font-optical-sizing: auto;
+    font-weight: 900;
+    font-style: normal;
+
+    font-size: calc(var(--cell-smallest) - (var(--cell-smallest)) * 0.3);
 }
 
-.cell.marked {
-    background-color: var(--marked);
+.cell.bombs0 {
+    background-color: var(--blank);
+}
+
+.cell.bombs1 {
+    background-color: var(--blue);
+}
+
+.cell.bombs2 {
+    background-color: var(--green);
+}
+
+.cell.bombs3 {
+    background-color: var(--red);
+}
+
+.cell.bombs4 {
+    background-color: var(--purple);
+}
+
+.cell.bombs5 {
+    background-color: var(--maroon);
+}
+
+.cell.bombs6 {
+    background-color: var(--turquoise);
+}
+
+.cell.bombs7 {
+    background-color: var(--light-purple);
+}
+
+.cell.bombs8 {
+    background-color: var(--lighter-purple);
 }
 
 .row:nth-child(even) {
-    .cell:nth-child(even) {
+    .cell:nth-child(even).unmarked,
+    .cell:nth-child(even).bombs0 {
         filter: brightness(0.9);
     }
 }
 
 .row:nth-child(odd) {
-    .cell:nth-child(odd) {
+    .cell:nth-child(odd).unmarked,
+    .cell:nth-child(odd).bombs0 {
         filter: brightness(0.9);
     }
+}
+
+.broken-piece-container {
+    position: absolute;
+}
+
+.broken-piece {
+    position: absolute;
+    height: var(--cell-height);
+    width: var(--cell-width);
+    top: 0;
+    left: 0;
+    background-color: white;
+    opacity: 1;
+    transition: transform 0.5s linear, opacity 0.25s linear;
+}
+
+.broken-piece.left {
+    clip-path: polygon(0 0, 0% 100%, 50% 50%);
+}
+
+.broken-piece.top {
+    clip-path: polygon(0 0, 100% 0, 50% 50%);
+}
+
+.broken-piece.right {
+    clip-path: polygon(100% 100%, 100% 0, 50% 50%);
+}
+
+.broken-piece.bottom {
+    clip-path: polygon(100% 100%, 0 100%, 50% 50%);
 }

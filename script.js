@@ -1,10 +1,12 @@
 const content = document.getElementById("content");
-const cellSize = parseInt(getComputedStyle(content).getPropertyValue("--cell-size"));
+const root = document.querySelector(":root");
+const cellSize = parseInt(getComputedStyle(root).getPropertyValue("--cell-size"));
 const bombDensity = 0.1;
-const numberToEmoji = ["", "1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣"];
 
-const rows = Math.floor(window.innerHeight / cellSize);
-const columns = Math.floor(window.innerWidth / cellSize);
+const rows = Math.round(window.innerHeight / cellSize);
+root.style.setProperty("--cell-height", `${window.innerHeight / rows}px`);
+const columns = Math.round(window.innerWidth / cellSize);
+root.style.setProperty("--cell-width", `${window.innerWidth / columns}px`);
 const numberOfBombs = Math.floor(rows * columns * bombDensity);
 
 const cells = [];
@@ -18,6 +20,7 @@ for(let row = 0; row < rows; row++) {
     for(let column = 0; column < columns; column++) {
         const cell = document.createElement("div");
         cell.classList.add("cell");
+        cell.classList.add("unmarked");
 
         cell.isBomb = Math.random() < bombDensity;
         cell.isMarked = false;
@@ -37,7 +40,6 @@ for(let row = 0; row < rows; row++) {
     content.appendChild(rowDiv);
 }
 
-// lmao
 for(let row = 0; row < rows; row++) {
     for(let column = 0; column < columns; column++) {
         const cell = cells[row][column];
@@ -54,8 +56,8 @@ function forAllNeighbors(row, column, logic) {
             const neighborColumn = column + columnOffset;
 
             if(
-                neighborRow < 0 || neighborRow >= cells.length ||
-                neighborColumn < 0 || neighborColumn >= cells[0].length
+                neighborRow < 0 || neighborRow >= rows ||
+                neighborColumn < 0 || neighborColumn >= columns
             ) continue;
 
             const neighborCell = cells[neighborRow][neighborColumn];
@@ -64,22 +66,74 @@ function forAllNeighbors(row, column, logic) {
     }
 }
 
+function playBreakAnimation(cell) {
+    const bounds = cell.getBoundingClientRect();
+
+    const pieceContainer = document.createElement("div");
+    pieceContainer.classList.add("broken-piece-container");
+    pieceContainer.style.top = `${bounds.top}px`;
+    pieceContainer.style.left = `${bounds.left}px`;
+
+    const pieces = [];
+    for(let i = 0; i < 4; i++) {
+        const piece = document.createElement("div");
+        piece.classList.add("broken-piece");
+        pieces.push(piece);
+        pieceContainer.appendChild(piece);
+    }
+
+    pieces[0].classList.add("left");
+    pieces[1].classList.add("top");
+    pieces[2].classList.add("right");
+    pieces[3].classList.add("bottom");
+
+    setTimeout(() => {
+        pieces.forEach(p => p.style.opacity = 0);
+
+        pieces[0].style.transform = `translate(-${Math.random() * (cellSize / 2) + (cellSize / 2)}px, ${Math.random() * cellSize - (cellSize / 2)}px) rotate(${Math.random() * 45 * (Math.random() < 0.5 ? 1 : 1)}deg)`;
+        pieces[1].style.transform = `translate(${Math.random() * cellSize - (cellSize / 2)}px, -${Math.random() * (cellSize / 2) + (cellSize / 2)}px) rotate(${Math.random() * 45 * (Math.random() < 0.5 ? 1 : 1)}deg)`;
+        pieces[2].style.transform = `translate(${Math.random() * (cellSize / 2) + (cellSize / 2)}px, ${Math.random() * cellSize - (cellSize / 2)}px) rotate(${Math.random() * 45 * (Math.random() < 0.5 ? 1 : 1)}deg)`;
+        pieces[3].style.transform = `translate(${Math.random() * cellSize - (cellSize / 2)}px, ${Math.random() * (cellSize / 2) + (cellSize / 2)}px) rotate(${Math.random() * 45 * (Math.random() < 0.5 ? 1 : 1)}deg)`;
+
+        pieces[0].addEventListener("transitionend", () => {
+            pieces.forEach(p => p.remove());
+        });
+    }, 1);
+
+    content.appendChild(pieceContainer);
+}
+
 function clickCell(row, column) {
     const cell = cells[row][column];
-    if(!cell.isBomb) {
-        cell.isMarked = true;
 
-        cell.classList.add("marked");
+    if(cell.isMarked) {
+        let neighborFlagCount = 0;
+        forAllNeighbors(row, column, neighbor => {
+            if(neighbor.isFlagged) neighborFlagCount++;
+        })
 
-        if(cell.neighboringBombs === 0) {
+        if(neighborFlagCount === cell.neighboringBombs) {
             forAllNeighbors(row, column, (neighborCell, neighborRow, neighborColumn) => {
-                if(!neighborCell.isMarked) clickCell(neighborRow, neighborColumn);
+                if(!neighborCell.isMarked && !neighborCell.isFlagged) clickCell(neighborRow, neighborColumn);
             });
-        } else {
-            cell.innerHTML = numberToEmoji[cell.neighboringBombs];
         }
     } else {
-        cell.innerHTML = "💣";
+        if(!cell.isBomb) {
+            cell.isMarked = true;
+    
+            cell.classList.replace("unmarked", `bombs${cell.neighboringBombs}`);
+    
+            if(cell.neighboringBombs === 0) {
+                forAllNeighbors(row, column, (neighborCell, neighborRow, neighborColumn) => {
+                    if(!neighborCell.isMarked) clickCell(neighborRow, neighborColumn);
+                });
+            } else {
+                cell.innerHTML = cell.neighboringBombs;
+                playBreakAnimation(cell);
+            }
+        } else {
+            cell.innerHTML = "💣";
+        }
     }
 }
 
