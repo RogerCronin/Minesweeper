@@ -7,7 +7,7 @@
     <link rel="shortcut icon" type="image/png" href="./assets/favicon.png"/>
     <link rel="stylesheet" href="style.css"/>
     <script src="./scripts/animations.js"></script>
-    <script src="./scripts/menu.js"></script>
+    <script src="./scripts/menu.js" defer></script>
     <script src="./scripts/main.js" defer></script>
 </head>
 <body class="reddit-mono-font">
@@ -18,10 +18,9 @@
             <input type="button" value="Some bombs" id="bomb-count-button" onclick="scrollBombCount()"/>
             <input type="button" value="Normal squares" id="cell-size-button" onclick="scrollCellSize()"/>
             <input type="button" value="Normal animations" id="animations-button" onclick="scrollAnimations()"/>
-            <input type="button" value="Show info by cursor" id="show-info-button" onclick="scrollShowInfo()"/>
         </div>
     </div>
     <div id="content"></div>
-    <span id="cursor-info"></span>
+    <span id="cursor-info" class="glass-blur"></span>
 </body>
 </html>

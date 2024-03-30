@@ -1,18 +1,4 @@
-function startGame() {
-    destroyBoard();
-    createBoard();
-    titleContentWrapper.classList.add("up");
-    titleContent.classList.add("unblur");
-    updateCursorInfo();
-
-    const transitionEndHandler = e => {
-        if(e.propertyName !== "backdrop-filter") return;
-        titleContent.style.zIndex = -1;
-        gameState = 1;
-        titleContent.removeEventListener("transitionend", transitionEndHandler)
-    }
-    titleContent.addEventListener("transitionend", transitionEndHandler);
-}
+// these functions are pretty self-explanatory, they are used when cycling through options on the title screen
 
 const bombCountMenu = ["Few bombs", "Some bombs", "Many bombs"];
 const bombDensities = [0.1, 0.2, 0.3];
@@ -31,7 +17,7 @@ function scrollCellSize() {
     cellSizeIndex++;
     if(cellSizeIndex === cellSizeMenu.length) cellSizeIndex = 0;
     cellSizeButton.value = cellSizeMenu[cellSizeIndex];
-    root.style.setProperty("--cell-size", cellSizes[cellSizeIndex]);
+    root.style.setProperty("--cell-size", cellSizes[cellSizeIndex]); // update css variable
     calculateRowsColumnsAndBombs();
 }
 
@@ -53,10 +39,12 @@ function scrollShowInfo() {
     showInfoButton.value = showInfoMenu[showInfoIndex];
 }
 
+// the bomb count button should also display the number of bombs, we wrap it in this function so it's reusable and whatever
 function updateBombCountButton() {
     bombCountButton.value = `${bombCountMenu[bombCountIndex]} (${numberOfBombs})`
 }
 
+// when we move the mouse, update the position of the cursor info span box thing with the bomb count
 window.addEventListener("mousemove", e => {
     cursorInfo.style.left = `${e.clientX + 32}px`;
     cursorInfo.style.top = `${e.clientY - 32}px`;

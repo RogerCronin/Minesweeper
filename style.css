@@ -1,5 +1,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Reddit+Mono:wght@900&display=swap");
 
+/* I don't like commenting my css, so stop looking! */
+
 :root {
     --cell-size: 64px;
     --cell-width: var(--cell-size);
@@ -297,4 +299,12 @@ div.firework {
     left: 0;
     font-size: 2rem;
     text-overflow: clip;
+    border-radius: 1rem;
+    padding: 0.5rem 1rem 0.5rem 0.5rem;
+    display: none;
+}
+
+.glass-blur {
+    background-color: rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(calc(0.1 * var(--cell-size)));
 }
