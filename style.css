@@ -283,6 +283,7 @@ div.explosion {
     height: 160px;
     background-image: url("./assets/explosion.png");
     background-repeat: no-repeat;
+    image-rendering: pixelated;
 }
 
 div.firework {
@@ -291,6 +292,7 @@ div.firework {
     height: 35px;
     background-image: url("./assets/fireworks.png");
     background-repeat: no-repeat;
+    image-rendering: pixelated;
 }
 
 #cursor-info {
