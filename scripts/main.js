@@ -20,7 +20,7 @@ let gameState = 0; // controls the current state of the game
 // 3 - win / lose animation
 
 let numberOfFlags = 0; // number of flags currently placed
-let firstClick = true; // true if this is the first click of the game; used to prevent first reveal being a bomb
+let firstClick = true; // true if this is the first click of the game; used for good bomb placement
 let cells = []; // matrix containing cell HTML elements
 
 let rows, columns, numberOfBombs = 0; // self explanatory, right?
@@ -80,19 +80,6 @@ function createBoard() {
     
         content.appendChild(rowDiv);
     }
-
-    seedBombsRandomly(); // after creating the board, add bombs to it
-}
-
-function seedBombsRandomly(amount = numberOfBombs) {
-    for(let i = 0; i < amount; i++) {
-        let row, column;
-        do { // get some row and column that isn't a bomb
-            row = Math.floor(Math.random() * rows);
-            column = Math.floor(Math.random() * columns);
-        } while(cells[row][column].isBomb);
-        cells[row][column].isBomb = true; // set it to be a bomb
-    }
 }
 
 // called when you click the big start game button
@@ -143,6 +130,8 @@ function getNeighboringBombs(cell) {
 
 // when you click on a cell
 function clickCell(row, column) {
+    if(firstClick) seedBombs(row, column); // after first click, add mines to board
+
     const cell = cells[row][column];
     const neighboringBombs = getNeighboringBombs(cell);
 
@@ -173,13 +162,6 @@ function clickCell(row, column) {
                 cell.label.innerHTML = neighboringBombs;
                 animationState.playClick(cell);
             }
-        } else if(firstClick) { // if it is a bomb but this is the first cell we're openeing, move the bomb
-            while(cells[row][column].isBomb) { // as long as the current cell has a bomb,
-                cells[row][column].isBomb = false; // make it not a bomb
-                seedBombsRandomly(1); // and randomly add a bomb back somewhere else
-            }
-            cell.isMarked = false; // undo the click and retry it
-            clickCell(row, column);
         } else { // oops you clicked a bomb!!!
             animationState.playLabelChange(cell, "💣");
             animationState.playExplosion(cell); // kablam
@@ -187,7 +169,6 @@ function clickCell(row, column) {
         }
     }
 
-    firstClick = false; // we're done with our first click, so it's not the first click anymore
     updateCursorInfo(); // I don't think this is necessary...? but whatever
     checkForWin(); // see if you won the game
 }
