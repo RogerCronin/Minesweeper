@@ -130,7 +130,10 @@ function getNeighboringBombs(cell) {
 
 // when you click on a cell
 function clickCell(row, column) {
-    if(firstClick) seedBombs(row, column); // after first click, add mines to board
+    if(firstClick) { // after first click, add mines to board
+        firstClick = false;
+        seedBombs(row, column);
+    }
 
     const cell = cells[row][column];
     const neighboringBombs = getNeighboringBombs(cell);

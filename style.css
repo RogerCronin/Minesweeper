@@ -28,7 +28,7 @@ body {
     overflow: hidden;
     white-space: nowrap;
 
-    /* kindly taken from https://css-tricks.com/background-patterns-simplified-by-conic-gradients/ */
+    /* stolen from https://css-tricks.com/background-patterns-simplified-by-conic-gradients/ thank you Ana! */
     background-color: color-mix(in srgb, var(--unmarked) 90%, black);
     background-image:
         linear-gradient(
@@ -47,7 +47,7 @@ body {
             var(--unmarked) 75%,
             var(--unmarked)
         );
-    background-size: calc(2 * var(--cell-size)) calc(2 * var(--cell-size));
+    background-size: calc(2 * var(--cell-width)) calc(2 * var(--cell-height));
     background-position: 0 0, var(--cell-size) var(--cell-size);
 }
 
