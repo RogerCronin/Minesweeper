@@ -1,8 +1,6 @@
 const sleep = ms => new Promise(a => setTimeout(a, ms)); // pauses execution for ms milliseconds
 
 // preload assets
-const explosionAudio = new Audio("./assets/explosion.wav");
-const fireworkAudio = new Audio("./assets/fireworks.wav");
 new Image().src = "./assets/explosion.png";
 new Image().src = "./assets/fireworks.png";
 
@@ -157,16 +155,6 @@ async function spawnFireworkImage(left, top) {
     }
     await sleep(Math.random() * 800); // wait a random bit of time before deleting the firework
     firework.remove();
-}
-
-// these play the sound effects, audio variables are HTML Audio elements located in main.js
-
-function playExplosionSound() {
-    explosionAudio.play();
-}
-
-function playFireworksSound() {
-    fireworkAudio.play();
 }
 
 // I overengineered this a bit, but basically we move between predetermined animation states so there's never an invalid animation

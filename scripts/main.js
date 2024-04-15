@@ -129,7 +129,7 @@ function getNeighboringBombs(cell) {
 }
 
 // when you click on a cell
-function clickCell(row, column) {
+function clickCell(row, column, playSound = true) {
     if(firstClick) { // after first click, add mines to board
         firstClick = false;
         seedBombs(row, column);
@@ -149,17 +149,27 @@ function clickCell(row, column) {
 
         if(neighborFlagCount === neighboringBombs) { // if the number of flags equals the number of bombs it covers
             // then we can click all of the non-opened neighbors (this is like a QOL thing in a lot of minesweeper implementations)
+            let clickedACell = false;
+            let shouldPlaySnap = false;
             forAllNeighbors(row, column, (neighborCell, neighborRow, neighborColumn) => {
-                if(!neighborCell.isMarked && !neighborCell.isFlagged) clickCell(neighborRow, neighborColumn);
+                if(!neighborCell.isMarked && !neighborCell.isFlagged) {
+                    clickCell(neighborRow, neighborColumn, false);
+                    if(getNeighboringBombs(neighborCell) === 0) shouldPlaySnap = true;
+                    clickedACell = true;
+                }
             });
+            if(playSound && clickedACell) playClickSound();
+            if(playSound && shouldPlaySnap) playSnapSound();
         }
     } else { // if the cell is unopened
+        if(playSound) playClickSound();
         cell.isMarked = true; // open it!
         if(!cell.isBomb) { // if it isn't a bomb, we can do the normal clicky things
             if(neighboringBombs === 0) { // if cell doesn't have any bombs, also open its neighbors in a cascade
+                if(playSound) playSnapSound();
                 cell.classList.replace("unmarked", "bombs0");
                 forAllNeighbors(row, column, (neighborCell, neighborRow, neighborColumn) => {
-                    if(!neighborCell.isMarked) clickCell(neighborRow, neighborColumn); // ah, so cool
+                    if(!neighborCell.isMarked) clickCell(neighborRow, neighborColumn, false); // ah, so cool
                 });
             } else { // if the cell does have bombs, display the bomb count and play the funny animation
                 cell.label.innerHTML = neighboringBombs;
@@ -183,8 +193,13 @@ function toggleFlagForCell(row, column) {
 
     cell.isFlagged = !cell.isFlagged; // toggle flagged state
     numberOfFlags += cell.isFlagged ? 1 : -1; // update the number of flags you've made
-    if(cell.isFlagged) animationState.playLabelChange(cell, "🚩")
-    else cell.label.innerHTML = "";
+    if(cell.isFlagged) {
+        animationState.playLabelChange(cell, "🚩");
+        playFlagSound();
+    } else {
+        cell.label.innerHTML = "";
+        playUnflagSound();
+    }
 
     updateCursorInfo();
     checkForWin(); // see if you won the game
@@ -235,5 +250,5 @@ function updateCursorInfo() {
 window.addEventListener("resize", () => {
     calculateRowsColumnsAndBombs();
     if(gameState !== 0) panicEndGame(); // if we aren't at the title screen, get there quick!
-    else destroyBoard(); // and otherwise just get rid of the board since it'll no longer be aligned
+    else destroyBoard(); // otherwise destroy the board cause it could be messed up
 });

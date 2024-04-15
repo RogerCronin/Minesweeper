@@ -34,4 +34,7 @@ function seedBombsRandomly(startRow, startColumn) {
     }
 }
 
-let seedBombs = seedBombsDeterministically;
+let seedBombs = (startRow, startColumn) => {
+    firstClick = false;
+    seedBombsRandomly(startRow, startColumn);
+};
