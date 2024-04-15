@@ -12,7 +12,7 @@ function determineBoard(startRow, startColumn) {
             }
         }
         seedBombsRandomly(startRow, startColumn); // add new bombs
-        solved = solveBoard(startRow, startColumn); // can we solve it?
+        solved = isBoardSolvable(startRow, startColumn); // can we solve it?
     }
 }
 
@@ -36,5 +36,5 @@ function seedBombsRandomly(startRow, startColumn) {
 
 let seedBombs = (startRow, startColumn) => {
     firstClick = false;
-    seedBombsRandomly(startRow, startColumn);
+    seedBombsDeterministically(startRow, startColumn);
 };
